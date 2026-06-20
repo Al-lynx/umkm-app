@@ -1,0 +1,23 @@
+:root {
+
+  /* Background */
+  --bg-primary: #111315;
+  --bg-secondary: #1A1D1F;
+  --bg-card: #202427;
+
+  /* Border */
+  --border-color: #2B3033;
+
+  /* Brand */
+  --brand-primary: #C66A3D;
+  --brand-hover: #D97B4C;
+
+  /* Text */
+  --text-primary: #F5F5F5;
+  --text-secondary: #A1A1AA;
+
+  /* Status */
+  --success: #10B981;
+  --warning: #F59E0B;
+  --danger: #EF4444;
+}
