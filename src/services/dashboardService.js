@@ -40,9 +40,6 @@ export function getLowStockProducts(
   );
 }
 
-export function getDashboardInsights(
-  transactions,
-  products
-) {
+export function getDashboardInsights() {
   // isi logic insight
 }

@@ -28,8 +28,18 @@ export default function ProductFormModal({
   const [image, setImage] =
     useState("");
 
+  const resetForm =
+    () => {
+      setName("");
+      setPrice("");
+      setStock("");
+      setCategory("Kopi");
+      setImage("");
+    };
+
   useEffect(() => {
     if (editProduct) {
+      /* eslint-disable react-hooks/set-state-in-effect */
       setName(
         editProduct.name
       );
@@ -50,19 +60,11 @@ export default function ProductFormModal({
         editProduct.image ||
           ""
       );
+      /* eslint-enable react-hooks/set-state-in-effect */
     } else {
       resetForm();
     }
   }, [editProduct]);
-
-  const resetForm =
-    () => {
-      setName("");
-      setPrice("");
-      setStock("");
-      setCategory("Kopi");
-      setImage("");
-    };
 
   const handleSubmit =
     () => {

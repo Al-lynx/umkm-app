@@ -48,6 +48,7 @@ export default function CheckoutPage() {
   const handlePayment = () => {
     if (cart.length === 0) return;
 
+    /* eslint-disable react-hooks/purity */
     const transaction = {
       id: Date.now(),
       createdAt: new Date().toISOString(),
@@ -58,6 +59,7 @@ export default function CheckoutPage() {
       total,
       items: cart,
     };
+    /* eslint-enable react-hooks/purity */
 
     const transactions = getTransactions();
 

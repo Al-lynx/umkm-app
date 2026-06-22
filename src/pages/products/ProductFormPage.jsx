@@ -20,32 +20,21 @@ export default function ProductFormPage() {
 
   const isEdit = Boolean(id);
 
-  const [name, setName] = useState("");
-  const [price, setPrice] = useState("");
-  const [stock, setStock] = useState("");
-  const [category, setCategory] = useState("Kopi");
-  const [image, setImage] = useState("");
+  const product = isEdit
+    ? getProducts().find((item) => String(item.id) === id)
+    : null;
+
+  const [name, setName] = useState(() => (product ? product.name : ""));
+  const [price, setPrice] = useState(() => (product ? product.price : ""));
+  const [stock, setStock] = useState(() => (product ? product.stock : ""));
+  const [category, setCategory] = useState(() => (product ? product.category : "Kopi"));
+  const [image, setImage] = useState(() => (product ? (product.image || "") : ""));
 
   useEffect(() => {
-    if (!isEdit) return;
-
-    const products = getProducts();
-
-    const product = products.find(
-      (item) => String(item.id) === id
-    );
-
-    if (!product) {
+    if (isEdit && !product) {
       navigate("/products");
-      return;
     }
-
-    setName(product.name);
-    setPrice(product.price);
-    setStock(product.stock);
-    setCategory(product.category);
-    setImage(product.image || "");
-  }, [id]);
+  }, [isEdit, product, navigate]);
 
   const handleSave = () => {
     if (!name.trim() || !price || !stock) {

@@ -32,8 +32,8 @@ export default function POSPage() {
   const navigate =
     useNavigate();
 
-  const [products, setProducts] =
-    useState([]);
+  const [products] =
+    useState(() => getProducts());
 
   const [search, setSearch] =
     useState("");
@@ -43,12 +43,6 @@ export default function POSPage() {
 
   const [cart, setCart] =
     useState(getCart());
-
-  useEffect(() => {
-    setProducts(
-      getProducts()
-    );
-  }, []);
 
   useEffect(() => {
     saveCart(cart);

@@ -1,4 +1,3 @@
-import { getProducts } from "./storageService";
 
 // ===== TOP PRODUCTS =====
 export function getTopProducts(transactions = []) {

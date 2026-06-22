@@ -1,4 +1,5 @@
 // src/services/storageService.js
+import { products as defaultProducts } from "../data/products";
 
 const KEYS = {
   PRODUCTS: "products",
@@ -21,7 +22,12 @@ export function saveData(key, data) {
 
 // ===== PRODUCTS =====
 export function getProducts() {
-  return getData(KEYS.PRODUCTS);
+  const data = getData(KEYS.PRODUCTS);
+  if (!data || data.length === 0) {
+    saveProducts(defaultProducts);
+    return defaultProducts;
+  }
+  return data;
 }
 
 export function saveProducts(data) {

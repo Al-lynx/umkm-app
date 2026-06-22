@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import TopBar from "../../components/layout/TopBar";
@@ -18,13 +18,8 @@ import { getProductImage } from "../../utils/image";
 export default function ProductListPage() {
   const navigate = useNavigate();
 
-  const [products, setProducts] = useState([]);
+  const [products, setProducts] = useState(() => getProducts());
   const [search, setSearch] = useState("");
-
-  // INIT DATA
-  useEffect(() => {
-    setProducts(getProducts());
-  }, []);
 
   // FILTER
   const filteredProducts = products.filter((product) =>

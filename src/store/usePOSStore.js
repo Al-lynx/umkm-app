@@ -1,12 +1,6 @@
 import { useEffect, useState } from "react";
-import {
-  getProducts,
-  getCart,
-  getTransactions,
-  saveProducts,
-  saveCart,
-  saveTransactions,
-} from "../services/storageService";
+import * as storageService from "../services/storageService";
+
 
 export default function usePOSStore() {
   const [products, setProducts] = useState(storageService.getProducts());
