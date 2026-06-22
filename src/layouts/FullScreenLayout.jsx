@@ -1,8 +1,6 @@
 import { Outlet } from "react-router-dom";
 
-import BottomNav from "../components/layout/BottomNav";
-
-export default function MainLayout() {
+export default function FullScreenLayout() {
   return (
     <div
       className="
@@ -10,13 +8,9 @@ export default function MainLayout() {
 
         bg-[#0F1113]
         text-white
-
-        pb-16
       "
     >
       <Outlet />
-
-      <BottomNav />
     </div>
   );
 }

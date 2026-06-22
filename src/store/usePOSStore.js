@@ -1,38 +1,28 @@
 import { useEffect, useState } from "react";
-
 import {
   getProducts,
-  saveProducts,
-
   getCart,
-  saveCart,
-
   getTransactions,
+  saveProducts,
+  saveCart,
   saveTransactions,
-} from "../utils/storage";
+} from "../services/storageService";
 
 export default function usePOSStore() {
-  const [products, setProducts] =
-    useState(getProducts());
-
-  const [cart, setCart] =
-    useState(getCart());
-
-  const [transactions, setTransactions] =
-    useState(getTransactions());
+  const [products, setProducts] = useState(storageService.getProducts());
+  const [cart, setCart] = useState(storageService.getCart());
+  const [transactions, setTransactions] = useState(storageService.getTransactions());
 
   useEffect(() => {
-    saveProducts(products);
+    storageService.saveProducts(products);
   }, [products]);
 
   useEffect(() => {
-    saveCart(cart);
+    storageService.saveCart(cart);
   }, [cart]);
 
   useEffect(() => {
-    saveTransactions(
-      transactions
-    );
+    storageService.saveTransactions(transactions);
   }, [transactions]);
 
   return {

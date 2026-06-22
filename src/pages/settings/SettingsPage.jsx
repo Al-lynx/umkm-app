@@ -11,418 +11,149 @@ import {
 import {
   getProducts,
   getTransactions,
-} from "../../utils/storage";
+  saveProducts,
+  saveTransactions,
+} from "../../services/storageService";
 
 export default function SettingsPage() {
-  const products =
-    getProducts();
+  const products = getProducts();
+  const transactions = getTransactions();
 
-  const transactions =
-    getTransactions();
-
-  const exportBackup =
-    () => {
-      const backup = {
-        products:
-          JSON.parse(
-            localStorage.getItem(
-              "products"
-            )
-          ) || [],
-
-        transactions:
-          JSON.parse(
-            localStorage.getItem(
-              "transactions"
-            )
-          ) || [],
-
-        createdAt:
-          new Date().toISOString(),
-      };
-
-      const blob =
-        new Blob(
-          [
-            JSON.stringify(
-              backup,
-              null,
-              2
-            ),
-          ],
-          {
-            type:
-              "application/json",
-          }
-        );
-
-      const url =
-        URL.createObjectURL(
-          blob
-        );
-
-      const a =
-        document.createElement(
-          "a"
-        );
-
-      a.href = url;
-
-      a.download = `umkm-backup-${Date.now()}.json`;
-
-      a.click();
-
-      URL.revokeObjectURL(
-        url
-      );
+  // EXPORT BACKUP
+  const exportBackup = () => {
+    const backup = {
+      products: getProducts(),
+      transactions: getTransactions(),
+      createdAt: new Date().toISOString(),
     };
 
-  const importBackup =
-    (event) => {
-      const file =
-        event.target.files[0];
+    const blob = new Blob(
+      [JSON.stringify(backup, null, 2)],
+      { type: "application/json" }
+    );
 
-      if (!file) return;
+    const url = URL.createObjectURL(blob);
 
-      const reader =
-        new FileReader();
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `umkm-backup-${Date.now()}.json`;
+    a.click();
 
-      reader.onload =
-        (e) => {
-          try {
-            const data =
-              JSON.parse(
-                e.target.result
-              );
+    URL.revokeObjectURL(url);
+  };
 
-            if (
-              data.products
-            ) {
-              localStorage.setItem(
-                "products",
-                JSON.stringify(
-                  data.products
-                )
-              );
-            }
+  // IMPORT BACKUP
+  const importBackup = (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
 
-            if (
-              data.transactions
-            ) {
-              localStorage.setItem(
-                "transactions",
-                JSON.stringify(
-                  data.transactions
-                )
-              );
-            }
+    const reader = new FileReader();
 
-            alert(
-              "Backup berhasil diimport"
-            );
+    reader.onload = (e) => {
+      try {
+        const data = JSON.parse(e.target.result);
 
-            window.location.reload();
-          } catch {
-            alert(
-              "File backup tidak valid"
-            );
-          }
-        };
+        if (data.products) saveProducts(data.products);
+        if (data.transactions) saveTransactions(data.transactions);
 
-      reader.readAsText(
-        file
-      );
+        alert("Backup berhasil diimport");
+        window.location.reload();
+      } catch {
+        alert("File backup tidak valid");
+      }
     };
 
-  const resetAllData =
-    () => {
-      const confirmReset =
-        window.confirm(
-          "Hapus semua data aplikasi?"
-        );
+    reader.readAsText(file);
+  };
 
-      if (
-        !confirmReset
-      )
-        return;
+  // RESET DATA
+  const resetAllData = () => {
+    const confirmReset = window.confirm("Hapus semua data aplikasi?");
+    if (!confirmReset) return;
 
-      localStorage.clear();
+    saveProducts([]);
+    saveTransactions([]);
 
-      alert(
-        "Semua data berhasil dihapus"
-      );
-
-      window.location.reload();
-    };
+    alert("Semua data berhasil dihapus");
+    window.location.reload();
+  };
 
   return (
     <>
-      <TopBar
-        title="Pengaturan"
-        subtitle="Backup & Sistem"
-      />
+      <TopBar title="Pengaturan" subtitle="Backup & Sistem" />
 
       <div className="p-4 space-y-4">
 
-        {/* Statistik */}
-
-        <section
-          className="
-            bg-[#1B2122]
-            border border-white/10
-            rounded-3xl
-            p-5
-          "
-        >
+        <section className="bg-[#1B2122] border border-white/10 rounded-3xl p-5">
           <div className="flex items-center gap-3 mb-4">
-            <Database
-              className="text-orange-400"
-            />
-
-            <h2 className="font-semibold text-lg">
-              Statistik Data
-            </h2>
+            <Database className="text-orange-400" />
+            <h2 className="font-semibold text-lg">Statistik Data</h2>
           </div>
 
           <div className="space-y-3">
-
-            <StatRow
-              label="Total Produk"
-              value={
-                products.length
-              }
-            />
-
-            <StatRow
-              label="Total Transaksi"
-              value={
-                transactions.length
-              }
-            />
+            <StatRow label="Total Produk" value={products.length} />
+            <StatRow label="Total Transaksi" value={transactions.length} />
 
             <StatRow
               label="Local Storage"
               value={`${(
-                JSON.stringify(
-                  localStorage
-                ).length /
-                1024
-              ).toFixed(
-                2
-              )} KB`}
+                JSON.stringify(localStorage).length / 1024
+              ).toFixed(2)} KB`}
             />
-
           </div>
         </section>
 
-        {/* Backup */}
+        <section className="bg-[#1B2122] border border-white/10 rounded-3xl p-5">
+          <h2 className="font-semibold text-lg mb-4">Backup Data</h2>
 
-        <section
-          className="
-            bg-[#1B2122]
-            border border-white/10
-            rounded-3xl
-            p-5
-          "
-        >
-          <h2
-            className="
-              font-semibold
-              text-lg
-              mb-4
-            "
-          >
-            Backup Data
-          </h2>
+          <button onClick={exportBackup} className="w-full p-4 bg-[#252C2F] rounded-2xl flex gap-3">
+            <Download className="text-orange-400" />
+            Export Backup JSON
+          </button>
 
-          <div className="space-y-3">
-
-            <button
-              onClick={
-                exportBackup
-              }
-              className="
-                w-full
-                p-4
-
-                rounded-2xl
-
-                bg-[#252C2F]
-
-                flex
-                items-center
-                gap-3
-
-                hover:border-orange-500/20
-
-                transition
-              "
-            >
-              <Download
-                size={20}
-                className="
-                  text-orange-400
-                "
-              />
-
-              Export Backup JSON
-            </button>
-
-            <label
-              className="
-                w-full
-                p-4
-
-                rounded-2xl
-
-                bg-[#252C2F]
-
-                flex
-                items-center
-                gap-3
-
-                cursor-pointer
-              "
-            >
-              <Upload
-                size={20}
-                className="
-                  text-orange-400
-                "
-              />
-
-              Import Backup JSON
-
-              <input
-                hidden
-                type="file"
-                accept=".json"
-                onChange={
-                  importBackup
-                }
-              />
-            </label>
-
-          </div>
+          <label className="w-full mt-3 p-4 bg-[#252C2F] rounded-2xl flex gap-3 cursor-pointer">
+            <Upload className="text-orange-400" />
+            Import Backup JSON
+            <input hidden type="file" accept=".json" onChange={importBackup} />
+          </label>
         </section>
 
-        {/* Danger Zone */}
-
-        <section
-          className="
-            bg-[#1B2122]
-            border border-red-500/20
-            rounded-3xl
-            p-5
-          "
-        >
-          <h2
-            className="
-              text-red-400
-              font-semibold
-              text-lg
-              mb-4
-            "
-          >
+        <section className="bg-[#1B2122] border border-red-500/20 rounded-3xl p-5">
+          <h2 className="text-red-400 font-semibold text-lg mb-4">
             Danger Zone
           </h2>
 
           <button
-            onClick={
-              resetAllData
-            }
-            className="
-              w-full
-
-              p-4
-
-              rounded-2xl
-
-              bg-red-500/10
-              border
-              border-red-500/20
-
-              text-red-400
-
-              flex
-              items-center
-              gap-3
-            "
+            onClick={resetAllData}
+            className="w-full p-4 bg-red-500/10 border border-red-500/20 text-red-400 rounded-2xl flex gap-3"
           >
-            <Trash2
-              size={18}
-            />
-
+            <Trash2 />
             Reset Semua Data
           </button>
         </section>
 
-        {/* Info */}
-
-        <section
-          className="
-            bg-[#1B2122]
-            border border-white/10
-            rounded-3xl
-            p-5
-          "
-        >
-          <div className="flex items-center gap-3 mb-3">
-            <Info
-              className="text-orange-400"
-            />
-
-            <h2 className="font-semibold">
-              Informasi Aplikasi
-            </h2>
+        <section className="bg-[#1B2122] border border-white/10 rounded-3xl p-5">
+          <div className="flex gap-3 mb-3">
+            <Info className="text-orange-400" />
+            <h2 className="font-semibold">Informasi Aplikasi</h2>
           </div>
 
-          <div className="space-y-2 text-sm text-slate-400">
-            <p>
-              UMKM POS System
-            </p>
-
-            <p>
-              Version 1.0.0
-            </p>
-
-            <p>
-              React + Vite
-            </p>
-
-            <p>
-              Tailwind CSS
-            </p>
-
-            <p>
-              Local Storage Mode
-            </p>
+          <div className="text-sm text-slate-400 space-y-1">
+            <p>UMKM POS System</p>
+            <p>Version 1.0.0</p>
+            <p>React + Vite</p>
           </div>
         </section>
-
       </div>
     </>
   );
 }
 
-function StatRow({
-  label,
-  value,
-}) {
+function StatRow({ label, value }) {
   return (
-    <div
-      className="
-        flex
-        justify-between
-      "
-    >
-      <span className="text-slate-400">
-        {label}
-      </span>
-
-      <span className="font-medium">
-        {value}
-      </span>
+    <div className="flex justify-between">
+      <span className="text-slate-400">{label}</span>
+      <span className="font-medium">{value}</span>
     </div>
   );
 }

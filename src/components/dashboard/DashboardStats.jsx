@@ -6,38 +6,45 @@ import {
 } from "lucide-react";
 
 export default function DashboardStats({
-  omzet,
-  transaksi,
-  produk,
-  rataRata,
+  stats,
 }) {
-  const stats = [
+  const items = [
     {
       title: "Omzet",
-      value: `Rp ${omzet.toLocaleString("id-ID")}`,
+      value: `Rp ${stats.omzet.toLocaleString(
+        "id-ID"
+      )}`,
       icon: Wallet,
     },
+
     {
       title: "Transaksi",
-      value: transaksi,
+      value:
+        stats.totalTransaksi,
       icon: ShoppingCart,
     },
+
     {
       title: "Produk",
-      value: produk,
+      value:
+        stats.totalProduk,
       icon: Package,
     },
+
     {
       title: "Rata-rata",
-      value: `Rp ${rataRata.toLocaleString("id-ID")}`,
+      value: `Rp ${stats.rataRata.toLocaleString(
+        "id-ID"
+      )}`,
       icon: TrendingUp,
     },
   ];
 
   return (
     <div className="grid grid-cols-2 gap-4">
-      {stats.map((item) => {
-        const Icon = item.icon;
+      {items.map((item) => {
+        const Icon =
+          item.icon;
 
         return (
           <div
@@ -57,11 +64,11 @@ export default function DashboardStats({
               "
             />
 
-            <p className="text-slate-400 text-sm">
+            <p className="text-sm text-slate-400">
               {item.title}
             </p>
 
-            <h3 className="font-bold text-2xl mt-1">
+            <h3 className="text-2xl font-bold mt-1">
               {item.value}
             </h3>
           </div>

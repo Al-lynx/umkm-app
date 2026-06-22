@@ -1,39 +1,40 @@
+import NotificationBell from "./NotificationBell";
+
 export default function TopBar({
   title,
   subtitle,
-  action,
 }) {
   return (
     <header
       className="
         sticky
         top-0
-        z-50
 
+        z-40
+
+        bg-[#0F1113]/95
         backdrop-blur-xl
 
-        bg-[#0F1113]/90
-
         border-b
-        border-white/5
+        border-white/10
       "
     >
       <div
         className="
-          px-5
+          px-4
           py-4
 
           flex
-          justify-between
           items-center
+          justify-between
         "
       >
         <div>
           <h1
             className="
-              text-2xl
+              text-xl
               font-bold
-              text-orange-400
+              text-white
             "
           >
             {title}
@@ -52,7 +53,15 @@ export default function TopBar({
           )}
         </div>
 
-        {action}
+        <div
+          className="
+            flex
+            items-center
+            gap-3
+          "
+        >
+          <NotificationBell />
+        </div>
       </div>
     </header>
   );

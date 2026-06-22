@@ -1,26 +1,39 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  useNavigate,
+} from "react-router-dom";
 
 import TopBar from "../../components/layout/TopBar";
+
 import SearchBar from "../../components/shared/SearchBar";
-import POSProductCard from "../../components/pos/POSProductCard";
-import CheckoutBar from "../../components/pos/CheckoutBar";
+
 import EmptyState from "../../components/shared/EmptyState";
 
-import { useState } from "react";
+import POSProductCard from "../../components/pos/POSProductCard";
+
+import CheckoutBar from "../../components/pos/CheckoutBar";
 
 import {
   getProducts,
+} from "../../services/productService";
+
+import {
   getCart,
   saveCart,
-} from "../../utils/storage";
+  addToCart,
+  getCartSummary,
+} from "../../services/cartService";
 
 export default function POSPage() {
-  const [products, setProducts] =
-    useState([]);
-
   const navigate =
     useNavigate();
+
+  const [products, setProducts] =
+    useState([]);
 
   const [search, setSearch] =
     useState("");
@@ -49,76 +62,42 @@ export default function POSPage() {
   ];
 
   const filteredProducts =
-    products.filter((product) => {
-      const matchSearch =
-        product.name
-          .toLowerCase()
-          .includes(
-            search.toLowerCase()
-          );
+    products.filter(
+      (product) => {
+        const matchSearch =
+          product.name
+            .toLowerCase()
+            .includes(
+              search.toLowerCase()
+            );
 
-      const matchCategory =
-        category === "Semua" ||
-        product.category ===
-          category;
+        const matchCategory =
+          category === "Semua" ||
+          product.category ===
+            category;
 
-      return (
-        matchSearch &&
-        matchCategory
-      );
-    });
+        return (
+          matchSearch &&
+          matchCategory
+        );
+      }
+    );
 
-  const addToCart = (
+  const handleAddToCart = (
     product
   ) => {
-    const existing =
-      cart.find(
-        (item) =>
-          item.id ===
-          product.id
-      );
-
-    if (existing) {
-      setCart(
-        cart.map((item) =>
-          item.id ===
-          product.id
-            ? {
-                ...item,
-                qty:
-                  item.qty + 1,
-              }
-            : item
-        )
-      );
-
-      return;
-    }
-
-    setCart([
-      ...cart,
-      {
-        ...product,
-        qty: 1,
-      },
-    ]);
+    setCart(
+      addToCart(
+        cart,
+        product
+      )
+    );
   };
 
-  const totalItems =
-    cart.reduce(
-      (acc, item) =>
-        acc + item.qty,
-      0
-    );
-
-  const totalPrice =
-    cart.reduce(
-      (acc, item) =>
-        acc +
-        item.qty *
-          item.price,
-      0
-    );
+  const {
+    totalItems,
+    totalPrice,
+  } = getCartSummary(cart);
 
   const handleCheckout =
     () => {
@@ -212,7 +191,9 @@ export default function POSPage() {
                         product.id
                     )?.qty || 0
                   }
-                  onAdd={addToCart}
+                  onAdd={
+                    handleAddToCart
+                  }
                 />
               )
             )

@@ -1,5 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+
 import { X } from "lucide-react";
+
+import {
+  showSuccess,
+  showWarning,
+} from "../../utils/toast";
 
 export default function ProductFormModal({
   isOpen,
@@ -45,31 +51,34 @@ export default function ProductFormModal({
           ""
       );
     } else {
+      resetForm();
+    }
+  }, [editProduct]);
+
+  const resetForm =
+    () => {
       setName("");
       setPrice("");
       setStock("");
       setCategory("Kopi");
       setImage("");
-    }
-  }, [editProduct]);
-
-  if (!isOpen) return null;
+    };
 
   const handleSubmit =
     () => {
       if (
-        !name ||
+        !name.trim() ||
         !price ||
         !stock
       ) {
-        alert(
-          "Lengkapi semua data"
+        showWarning(
+          "Lengkapi semua data produk"
         );
 
         return;
       }
 
-      const stockNumber =
+      const stockValue =
         Number(stock);
 
       const productData = {
@@ -79,20 +88,20 @@ export default function ProductFormModal({
 
         name,
 
+        image,
+
+        category,
+
         price:
           Number(price),
 
         stock:
-          stockNumber,
-
-        category,
-
-        image,
+          stockValue,
 
         status:
-          stockNumber <= 0
+          stockValue <= 0
             ? "habis"
-            : stockNumber <=
+            : stockValue <=
               10
             ? "menipis"
             : "aman",
@@ -100,8 +109,19 @@ export default function ProductFormModal({
 
       onSave(productData);
 
+      showSuccess(
+        editProduct
+          ? "Produk berhasil diperbarui"
+          : "Produk berhasil ditambahkan"
+      );
+
+      resetForm();
+
       onClose();
     };
+
+  if (!isOpen)
+    return null;
 
   return (
     <div
@@ -116,22 +136,22 @@ export default function ProductFormModal({
         items-center
         justify-center
 
-        z-50
+        z-999
       "
     >
       <div
         className="
+          w-full
+          max-w-lg
+
+          mx-4
+
           bg-[#1B2122]
 
           border
           border-white/10
 
           rounded-3xl
-
-          w-full
-          max-w-md
-
-          mx-4
 
           overflow-hidden
         "
@@ -166,7 +186,6 @@ export default function ProductFormModal({
               className="
                 text-sm
                 text-slate-400
-                mt-1
               "
             >
               Kelola data produk
@@ -175,10 +194,6 @@ export default function ProductFormModal({
 
           <button
             onClick={onClose}
-            className="
-              text-slate-400
-              hover:text-white
-            "
           >
             <X size={20} />
           </button>
@@ -191,16 +206,15 @@ export default function ProductFormModal({
             p-5
             space-y-4
 
-            max-h-[75vh]
+            max-h-[70vh]
             overflow-y-auto
           "
         >
-          {/* PREVIEW IMAGE */}
+          {/* PREVIEW */}
 
           <div
             className="
-              w-full
-              h-48
+              h-52
 
               rounded-2xl
 
@@ -213,7 +227,7 @@ export default function ProductFormModal({
             <img
               src={
                 image ||
-                "https://placehold.co/600x400/1B2122/F97316?text=Preview"
+                "https://placehold.co/800x500/1B2122/F97316?text=Preview"
               }
               alt="Preview"
               className="
@@ -232,6 +246,7 @@ export default function ProductFormModal({
               className="
                 block
                 mb-2
+
                 text-sm
                 text-slate-400
               "
@@ -260,21 +275,18 @@ export default function ProductFormModal({
 
                 border
                 border-white/10
-
-                outline-none
-
-                focus:border-orange-500
               "
             />
           </div>
 
-          {/* NAMA */}
+          {/* NAME */}
 
           <div>
             <label
               className="
                 block
                 mb-2
+
                 text-sm
                 text-slate-400
               "
@@ -303,21 +315,18 @@ export default function ProductFormModal({
 
                 border
                 border-white/10
-
-                outline-none
-
-                focus:border-orange-500
               "
             />
           </div>
 
-          {/* HARGA */}
+          {/* PRICE */}
 
           <div>
             <label
               className="
                 block
                 mb-2
+
                 text-sm
                 text-slate-400
               "
@@ -346,21 +355,18 @@ export default function ProductFormModal({
 
                 border
                 border-white/10
-
-                outline-none
-
-                focus:border-orange-500
               "
             />
           </div>
 
-          {/* STOK */}
+          {/* STOCK */}
 
           <div>
             <label
               className="
                 block
                 mb-2
+
                 text-sm
                 text-slate-400
               "
@@ -376,7 +382,7 @@ export default function ProductFormModal({
                   e.target.value
                 )
               }
-              placeholder="50"
+              placeholder="100"
               className="
                 w-full
 
@@ -389,10 +395,6 @@ export default function ProductFormModal({
 
                 border
                 border-white/10
-
-                outline-none
-
-                focus:border-orange-500
               "
             />
           </div>
@@ -404,6 +406,7 @@ export default function ProductFormModal({
               className="
                 block
                 mb-2
+
                 text-sm
                 text-slate-400
               "
@@ -490,7 +493,6 @@ export default function ProductFormModal({
               rounded-xl
 
               bg-orange-500
-              hover:bg-orange-600
 
               text-black
               font-semibold
