@@ -12,11 +12,12 @@ export default function TopBar({
 
         z-40
 
-        bg-[#0F1113]/95
-        backdrop-blur-xl
+        bg-[#0F1113]/90
+        backdrop-blur-md
 
         border-b
         border-white/10
+        transform-gpu
       "
     >
       <div
